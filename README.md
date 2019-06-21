@@ -1,4 +1,4 @@
-# Java Developer Handbook
+# Developer Handbook
 
 ## 																			*Java开发者手册*
 
