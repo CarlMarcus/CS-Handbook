@@ -62,5 +62,7 @@
 >
 > sleep 一定是当前线程调用此方法，当前线程进入TIMED_WAITING状态，但不释放对象锁，millis后线程自动苏醒进入就绪状态。
 
+**JMM内存模型** 
 
+[Java 内存模型 JMM 深度解析](https://juejin.im/post/5a27ab3851882546d71f36e1)             [全面理解Java内存模型(JMM)及volatile关键字](https://blog.csdn.net/javazejian/article/details/72772461)               [Java内存模型（JMM）总结](https://zhuanlan.zhihu.com/p/29881777)
 
