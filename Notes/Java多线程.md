@@ -51,18 +51,56 @@
 
 > yield一定是当前线程调用此方法nowThread.yield()，当前线程放弃获取的CPU时间片，但不释放锁资源，由运行状态变为就绪状态，让OS再次选择线程，yield()不会导致阻塞。
 >
-> join/join(millis)==是当前线程里调用其它线程==otherThread的join方法，当前线程进入WAITING/TIMED_WAITING状态，当前线程不会释放已经持有的对象锁。在A线程中调用了B线程的join()方法时，表示只有当B线程执行完毕时，A线程才能继续执行。线程otherThread执行完毕或者millis时间到，当前线程一般情况下进入RUNNABLE状态，也有可能进入BLOCKED状态（因为join是基于wait实现的）。其实，join方法是通过调用线程的wait方法来达到同步的目的的。例如，A线程中调用了B线程的join方法，则相当于A线程调用了B线程的wait方法，在调用了B线程的wait方法后，A线程就会进入阻塞状态，当B线程执行完（或者到达等待时间），B线程会自动调用自身的notifyAll方法唤醒A线程，从而达到同步的目的。
+> join/join(millis) 是当前线程里调用其它线程otherThread的join方法，当前线程进入WAITING/TIMED_WAITING状态，当前线程不会释放已经持有的对象锁。在A线程中调用了B线程的join()方法时，表示只有当B线程执行完毕时，A线程才能继续执行。线程otherThread执行完毕或者millis时间到，当前线程一般情况下进入RUNNABLE状态，也有可能进入BLOCKED状态（因为join是基于wait实现的）。其实，join方法是通过调用线程的wait方法来达到同步的目的的。例如，A线程中调用了B线程的join方法，则相当于A线程调用了B线程的wait方法，在调用了B线程的wait方法后，A线程就会进入阻塞状态，当B线程执行完（或者到达等待时间），B线程会自动调用自身的notifyAll方法唤醒A线程，从而达到同步的目的。
 >
 > wait 当前线程调用对象的wait()方法，当前线程释放对象锁，让出CPU，进入等待队列，依靠notify()/notifyAll()唤醒或者wait(long timeout) timeout时间到自动唤醒。obj.notify()唤醒在此对象监视器上等待的单个线程，选择是任意性的。notifyAll()唤醒在此对象监视器上等待的所有线程，但是调用notify方法的线程并不马上释放锁，还是会继续执行完。二者结合与synchronized关键字使用，可以建立很多优秀的同步模型。
 >
 > >  [Java 多线程编程之：notify 和 wait 用法](https://segmentfault.com/a/1190000018096174)：
 > >
-> > - 无论是执行对象的 wait、notify 还是 notifyAll 方法，必须保证当前运行的线程取得了该对象的控制权（monitor）
+> > - 无论是执行对象的 wait、notify 还是 notifyAll 方法，必须保证当前运行的线程取得了该对象的控制权（monitor），所以应该在synchronized方法或代码块里
 > > - 我们可以通过同步锁来获得对象控制权，例如：synchronized 代码块。
 >
 > sleep 一定是当前线程调用此方法，当前线程进入TIMED_WAITING状态，但不释放对象锁，millis后线程自动苏醒进入就绪状态。
 
 **JMM内存模型** 
 
-[Java 内存模型 JMM 深度解析](https://juejin.im/post/5a27ab3851882546d71f36e1)             [全面理解Java内存模型(JMM)及volatile关键字](https://blog.csdn.net/javazejian/article/details/72772461)               [Java内存模型（JMM）总结](https://zhuanlan.zhihu.com/p/29881777)
+> [Java 内存模型 JMM 深度解析](https://juejin.im/post/5a27ab3851882546d71f36e1)      [全面理解Java内存模型(JMM)及volatile关键字](https://blog.csdn.net/javazejian/article/details/72772461)      [Java内存模型（JMM）总结](https://zhuanlan.zhihu.com/p/29881777)
+>
+> 亮点：JMM内存布局中，实例对象的成员方法中数据是基本类型，则存在线程工作内存的栈帧中，如果是引用类型包括数组，则引用存在线程工作内存栈帧中，对象存在堆。实例对象的成员变量，一律存在堆上。常量、静态变量都存在方法区。（堆和方法区都是共享的）
+
+**synchronized关键字**
+
+[深入理解Java并发之synchronized实现原理](https://blog.csdn.net/javazejian/article/details/72828483)     [Java synchronized原理总结](https://zhuanlan.zhihu.com/p/29866981)     [Java并发编程：Synchronized及其实现原理](https://www.cnblogs.com/paddix/p/5367116.html)          [Java并发编程：Synchronized底层优化 (偏向锁、轻量级)](https://www.cnblogs.com/paddix/p/5405678.html)    [死磕Java并发](http://cmsblogs.com/?tag=死磕java并发)    [JVM 锁优化](https://blog.leishunyu.com/2019/01/19/2019-01-19-锁优化)
+
+> synchronized原理：Java对象里有一个Java对象头，对象头里主要有俩东西，mark word和klass word。Klass Word指示自己的类元信息，比如自己属于哪个类的实例。Mark Word用于存储对象自身的运行时数据，hashcode、GC分代年龄、锁状态及标志位、线程持有的锁的指针、偏向线程 ID、偏向时间戳等等（2个字节码），其中指针指向的是monitor对象。监视器锁（Monitor）底层是使用操作系统的mutex lock实现的。
+>
+> synchronized中锁主要存在四中状态，依次是：无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态，他们会随着竞争的激烈而逐渐升级。注意锁可以升级不可降级。
+>
+> 偏向锁适应：认为主要是某一个线程获得锁，那么这个线程不需要申请，无需同步
+>
+> 轻量级锁：倘若偏向锁失败，变轻量级锁，适应的是线程交替执行，不会出现多个线程同一时间申请同一个锁
+>
+> 自旋锁：轻量级锁失败后，虚拟机为了避免线程真实地在操作系统层面挂起，还会进行一项称为自旋锁的优化手段，一般50个循环或100循环。如果得到锁，就顺利进入临界区。如果还不能获得锁，那就会将线程在操作系统层面挂起
+>
+> 再就是重量级锁，简单点
+>
+> - 偏向锁：只有一个线程进入临界区；
+> - 轻量级锁：多个线程交替进入临界区；
+> - 重量级锁：多个线程同时进入临界区。
+>
+> synchronized可重入：在一个线程调用synchronized方法的同时在其方法体内部调用该对象另一个synchronized方法
+>
+> 对于synchronized来说，如果一个线程在等待锁，那么结果只有两种，要么它获得这把锁继续执行，要么它就保存等待，即使调用中断线程的方法，也不会生效
+
+| 锁       | 优点                                                         | 缺点                                             | 适用场景                             |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------ | ------------------------------------ |
+| 偏向锁   | 加锁和解锁不需要额外的消耗，和执行非同步方法比仅存在纳秒级的差距。 | 如果线程间存在锁竞争，会带来额外的锁撤销的消耗。 | 适用于只有一个线程访问同步块场景。   |
+| 轻量级锁 | 竞争的线程不会阻塞，提高了程序的响应速度。                   | 如果始终得不到锁竞争的线程使用自旋会消耗CPU。    | 追求响应时间。同步块执行速度非常快。 |
+| 重量级锁 | 线程竞争不使用自旋，不会消耗CPU。                            | 线程阻塞，响应时间缓慢。                         | 追求吞吐量。同步块执行速度较长。     |
+
+![synchronized原理](assets/synchronized原理.jpg)
+
+**volatile关键字**
+
+**final关键字**
 
