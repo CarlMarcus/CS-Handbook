@@ -45,7 +45,7 @@
 > - 同步队列的线程争抢对象锁，但线程1什么时候能抢到就不知道了，如果获得锁，进入RUNNABLE状态，否则进入BLOCKED状态等待获取锁。
 >
 
-![img](assets/20180701221233161-1562202105433.jpg)
+![img](assets/20180701221233161.jpg)
 
 **线程基本操作**：yield，join，wait，notify，sleep，interrupt
 
@@ -61,6 +61,8 @@
 > > - 我们可以通过同步锁来获得对象控制权，例如：synchronized 代码块。
 >
 > sleep 一定是当前线程调用此方法，当前线程进入TIMED_WAITING状态，但不释放对象锁，millis后线程自动苏醒进入就绪状态。
+>
+> [JAVA多线程之中断机制(如何处理中断？)](https://www.cnblogs.com/hapjin/p/5450779.html)
 
 **JMM内存模型** 
 
