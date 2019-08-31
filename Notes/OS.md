@@ -56,5 +56,10 @@
 >
 > 下面是交互式系统：时间片轮转、优先级调度、多级反馈队列
 
-**内存连续分配方式** https://zhuanlan.zhihu.com/p/35147253
+**内存连续分配方式** [内存那点事儿](https://zhuanlan.zhihu.com/p/35147253)   [Linux进程如何使用内存](https://zhuanlan.zhihu.com/p/56930505)   [计算机虚拟内存](https://zhuanlan.zhihu.com/p/61238591)
 
+页式管理、段式管理、段页式管理、优缺点
+
+虚拟内存的定义及实现方式
+
+几种页面置换算法 http://c.biancheng.net/view/1277.html OPT/FIFO/LRU/Clock/LFU
