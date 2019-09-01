@@ -42,5 +42,7 @@
 
 **连续等待协议、连续ARQ协议和滑动窗口协议** https://blog.csdn.net/yangbodong22011/article/details/48473183       https://sexywp.com/introduction-of-arq.htm       https://www.jianshu.com/p/07bd39becbfd
 
+停止等待 就是指发送完一个分组就停止发送，等待对方的确认，只有对方确认过，才发送下一个分组。
+
 **TCP的流量控制和拥塞控制**
 
