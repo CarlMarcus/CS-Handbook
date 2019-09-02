@@ -1,24 +1,47 @@
 ## JVM
 
-[SnailClimb/JavaGuide/JVM内存模型](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/jvm/Java内存区域.md)
+[Java虚拟机](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20%E8%99%9A%E6%8B%9F%E6%9C%BA.md)
 
-JVM内存模型分为五个部分：程序技术器PC、Java虚拟机栈、本地方法栈、堆、方法区。
+[JVM内存模型](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/jvm/Java内存区域.md)
 
-PC：记录正在执行的虚拟机字节码指令的地址（如果正在执行的是本地方法则为空）。
+[JVM垃圾回收](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/jvm/JVM垃圾回收.md)
 
-JVM stack：每个 Java 方法在执行的同时会创建一个栈帧用于存储**局部变量表**、**操作数栈**、**常量池引用**等信息。从方法调用直至执行完成的过程，对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。
+[类文件结构](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/jvm/%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84.md)
 
-`java -Xss2M ` 指定每个线程的 Java 虚拟机栈内存大小为2M。该区域可能抛出以下异常：
+[类加载过程](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.md)
 
-- 当线程请求的栈深度超过最大值，会抛出 StackOverflowError 异常；（个数限制）
-- 栈进行动态扩展时如果无法申请到足够内存，会抛出 OutOfMemoryError 异常。（内存限制）
+[类加载器](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8.md)
 
-本地方法栈：与 Java 虚拟机栈类似，它们之间的区别只不过是本地方法栈为本地方法服务。一般由C/C++/汇编写
+Java虚拟机内存模型特点和作用
 
-堆：大部分对象都在这里分配内存，是垃圾收集的主要区域（"GC 堆"）。根据分代收集算法将堆分为新生代和老年代。堆不需要连续内存，并且可以动态增加其内存，增加失败会抛出 OutOfMemoryError 异常。`java -Xms1M -Xmx2M` 指定一个程序的堆内存大小，第一个参数设置初始值，第二个参数设置最大值。
+- 程序计数器
+- Java虚拟机栈
+- 本地方法区
+- 堆
+- 方法区
 
-方法区：用于存放已被加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。和堆一样不需要连续的内存，并且可以动态扩展，动态扩展失败一样会抛出 OutOfMemoryError 异常。对这块区域进行垃圾回收的主要目标是对常量池的回收和对类的卸载，但是一般比较难实现。
+对象创建过程    
 
-![img](assets/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d332f4a564de8bf90e8a18ce697b6e695b0e68daee58cbae59f9f2e706e67.png)
+对象访问过程    
 
-![img](assets/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d334a617661e8bf90e8a18ce697b6e695b0e68daee58cbae59f9f4a444b312e382e706e67-1567404571643.png) 
+对象的内存结构    
+
+垃圾收集算法    
+
+如何判定哪些对象需要回收？    
+
+对象内存分配策略    
+
+分配担保机制
+
+何时出发minor gc，何时触发full gc
+
+垃圾收集器的比较    
+
+Class文件结构    
+
+类加载的时机    
+
+类加载过程    
+
+双亲委派模型以及好处，如何实现一个类加载器
