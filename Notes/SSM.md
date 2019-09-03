@@ -3,8 +3,8 @@
 [15个经典的Spring面试常见问题](https://zhuanlan.zhihu.com/p/68191247)
 
 > 1. 什么是Spring框架?
-> 2. 列举一些重要的Spring模块？
-> 3. 谈谈自己对于Spring IoC和AOP的理解
+> 2. 列举一些重要的Spring模块？spring core、spring aop 、spring dao、spring orm、
+> 3. 
 > 4. Spring AOP 和 AspectJ AOP 有什么区别？
 > 5. Spring 中的bean的作用域有哪些?
 > 6. Spring 中的bean生命周期?

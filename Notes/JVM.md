@@ -44,8 +44,11 @@
 
 **类加载过程**    
 
-**双亲委派模型以及好处，如何实现一个类加载器**
+**双亲委派模型以及好处，如何破坏双亲委托模型，如何实现一个类加载器**
+
+**ClassLoader.loadClass()与Class.forName()的区别** https://my.oschina.net/gpzhang/blog/486743
 
 **OOM 出现的有哪些场景？为什么会发生？**
 
 **JVM参数**
+
