@@ -2,97 +2,115 @@
 
 [15个经典的Spring面试常见问题](https://zhuanlan.zhihu.com/p/68191247)
 
-> 1. 什么是Spring框架?
+> 1. **什么是Spring框架?** 
+>
+> 一个开源的web框架，核心框架提供了ioc、aop、orm、dao和事务管理功能
 >
 > 2. **Spring都有哪些注解？**
 >
->     Component 普通bean /Repository DAObean /Service业务组件bean /Controller控制器组件bean/@Bean
+>  **组件注解**：@Component 表示一个普通的spring Bean类 |  @Repository 标注一个DAO组件类 | @Service：标注一个业务逻辑组件类 | @Controller：标注一个控制器组件类。实质上他们属于同一类注解，用法相同，功能相同，区别在于标识组件的类型。@Component可以代替@Repository、@Service、@Controller，因为这三个注解是被@Component标注的。@Component需要在xml中配置
 >
->     装配：@Autowired：spring带的 @Resource：java.annotation包下
+>  ```xml
+>  <!-- 自动扫描指定包及其子包下的所有Bean类 -->
+>  <context:component-scan base-package="org.springframework.*"/>
+>  ```
+>
+>  **装配bean的注解**：@Autowired (属于Spring)、@Resource(属于java.annotation)、 @PostConstruct 和 @PreDestroy 方法 实现初始化之后和销毁bean之前进行的操作。比较：@Resource的作用相当于@Autowired，均可标注在字段或属性的setter方法上。
+>
+>  但@Autowired默认按照类型装配，如果容器中包含多个同一类型的Bean，那么启动容器时会报 找不到指定类型bean 的异常，解决办法是结合**@Qualifier**注解进行限定，指定注入的bean名称。
+>
+>  @Resource默认按名称装配，如果没有指定name属性，并且按照默认的名称仍然找不到依赖对象时，则按类型装配。
+>
+>  **@Component vs @Configuration and @Bean**
+>
+>     > Spring帮助我们管理Bean分为两个部分，一个是注册Bean，一个装配Bean。有三种完成方式：自动装配、JavaConfig方式(就是注解)、再就是XML配置。在自动配置的方式中，使用@Component告诉Spring，我是一个bean，你要来管理我，然后使用@AutoWired注解去装配Bean(所谓装配，就是管理对象直接的协作关系)。然后在JavaConfig中，@Configuration其实就是告诉spring，spring容器要怎么配置（怎么去注册bean，怎么去处理bean之间的关系）。@Bean的意思就是，我要获取这个bean的时候，你spring要按照这种方式去帮我获取到这个bean。到了使用xml的方式，也是如此。<bean>标签就是告诉spring怎么获取这个bean，各种<ref>就是手动的配置bean之间的关系。
+>
+>  @Bean注解主要用于方法上，有点类似于工厂方法，当使用了@Bean注解，我们可以连续使用多种定义bean时用到的注解，譬如用@Qualifier注解定义工厂方法的名称，用@Scope注解定义该bean的作用域范围，譬如是singleton还是prototype等。
+>
+>  Spring 中新的 Java 配置支持的核心就是@Configuration 注解的类。这些类主要包括 @Bean 注解的方法来为 Spring 的 IoC 容器管理的对象定义实例，配置和初始化逻辑。使用@Configuration 来注解类表示类可以被 Spring 的 IoC 容器所使用，作为 bean 定义的资源。
+>
+>  简单说：一个@Component需要注入某@Configuration中的@Bean工厂方法产生的实例
+>
+>  **事务注解**：在处理dao层或service层的事务操作时，譬如删除失败时的回滚操作。使用**@Transactional** 作为注解，但是需要在配置文件激活
+>
+>  ```XML
+>  <!-- 开启注解方式声明事务 -->
+>  <tx:annotation-driven transaction-manager="transactionManager" />
+>  ```
 >
 > 3. **列举一些重要的Spring模块？**spring core、spring aop 、spring dao、spring orm、spring mvc
 >
-> 4. **Spring AOP 和 AspectJ AOP 有什么区别？**
+> 4. **spring有哪些注入方式**
 >
+>     接口注入、字段注入、setter注入、构造方法注入、注解注入、静态工厂注入、实例工厂等
+>
+> 5. **Spring AOP的原理**
+>
+>     <img src="assets/efa47f28e884f98d3a0c" alt="img" style="zoom: 50%;" />
+>
+>     有些操作需要跨越多个层次，为了避免重复代码，更好地将系统级别的代码抽离出来，去掉与不同层次对象的耦合，就产生了面向AOP。
+>
+>     pointcut即在哪个地方进行切入,它可以指定某一个点，也可以指定多个点，比如类A的methord函数，也可以利用正则表达式指定某一些类的某一些方法。Advice就是在切入点干什么，比如打日志，执行缓存、异常处理什么的。pointcut+advice就是aspect。但到这一地步并不是完整的，因为还不知道如何将切面植入到代码中，解决此问题的技术就是Proxy。
+>
+> 6. **Spring AOP 和 AspectJ AOP 有什么区别？**
 >     - Spring AOP采用动态代理的方式，在运行期生成代理类来实现AOP，不修改原类的实现(运行时增强)；Aspectj 使用编译期字节码织入(weave)的方式，在编译的时候，直接修改类的字节码，把所定义的切面代码逻辑插入到目标类中(编译增强)。
 >     - Spring AOP可以对其它模块正常编译出的代码起作用，Aspectj 需要对其它模块使用acj重新编译
 >     - 由于动态代理机制，Spring AOP对于直接调用类内部的其它方法无效，无法对定义为final的类生效。Aspectj没有这些限制
 >     - Spring AOP使用XML配置文件的方式定义切入点(PointCut)，Aspectj使用注解方式
 >
-> 5. **Spring 中的bean的作用域有哪些?** singleton、prototype、(request、session、global-session，只在web-aware Spring ApplicationContext的上下文中有效)
+> 7. **Spring 中的bean的作用域有哪些?** 
 >
-> 6. **Spring 中的bean生命周期?**
+>  singleton、prototype、(request、session、global-session，只在web-aware Spring ApplicationContext的上下文中有效)
 >
->     由容器获取**BeanDefinition**，按需进行**实例化**。实例化后的对象被封装在**BeanWrapper**对象中，并且此时对象仍然是一个原生的状态，并没有进行依赖注入。 紧接着，Spring根据BeanDefinition中的信息进行**依赖注入**。 并且通过BeanWrapper提供的设置属性的接口完成依赖注入。紧接着，Spring会检测该对象是否实现了**xxxAware接口**，并将相关的xxxAware实例注入给bean。当经过上述几个步骤后，bean对象已经被正确构造，但如果你想要对象被使用前再进行一些自定义的处理，就可以通过BeanPostProcessor接口实现。 当BeanPostProcessor的前置处理完成后就会进入本阶段。 InitializingBean接口只有一个函数：afterPropertiesSet。DisposableBean和destroy-method
+> 8. **Spring 中的bean生命周期?**
 >
->     和init-method一样，通过给destroy-method指定函数，就可以在bean销毁前执行指定的逻辑。
+> 9. **Spring 中的单例 bean 的线程安全问题了解吗？**
 >
-> 7. **Spring 中的单例 bean 的线程安全问题了解吗？**
+> 线程安全这个问题，要从单例与原型Bean分别进行说明。对于原型Bean,每次创建一个新对象，也就是线程之间并不存在Bean共享，自然是不会有线程安全的问题。对于单例Bean,所有线程都共享一个单例实例Bean,因此是存在资源的竞争。如果单例Bean,是一个无状态Bean，也就是线程中的操作不会对Bean的成员执行查询以外的操作，那么这个单例Bean是线程安全的。比如Spring mvc 的 Controller、Service、Dao等，这些Bean大多是无状态的，只关注于方法本身。对于有状态的bean，Spring官方提供的bean，一般提供了通过**ThreadLocal**去解决线程安全的方法，比如RequestContextHolder、TransactionSynchronizationManager、LocaleContextHolder等。
 >
->     线程安全这个问题，要从单例与原型Bean分别进行说明。对于原型Bean,每次创建一个新对象，也就是线程之间并不存在Bean共享，自然是不会有线程安全的问题。对于单例Bean,所有线程都共享一个单例实例Bean,因此是存在资源的竞争。如果单例Bean,是一个无状态Bean，也就是线程中的操作不会对Bean的成员执行查询以外的操作，那么这个单例Bean是线程安全的。比如Spring mvc 的 Controller、Service、Dao等，这些Bean大多是无状态的，只关注于方法本身。对于有状态的bean，Spring官方提供的bean，一般提供了通过**ThreadLocal**去解决线程安全的方法，比如RequestContextHolder、TransactionSynchronizationManager、LocaleContextHolder等。
+> 10. **说说自己对于Spring MVC了解?**
 >
-> 8. **说说自己对于Spring MVC了解?**
+> SpringMvc是基于过滤器对servlet进行了封装的一个框架，SpringMvc工作时主要是通过DispatcherServlet管理接收到的请求并进行处理
 >
->     SpringMvc是基于过滤器对servlet进行了封装的一个框架，SpringMvc工作时主要是通过DispatcherServlet管理接收到的请求并进行处理
+> 11. **Spring 框架中用到了哪些设计模式？**
 >
-> 9. **SpringMVC 工作原理了解吗?**
->
->     工作流程：
->
->     用户向服务器发送请求，请求被Spring 前端控制Servelt DispatcherServlet捕获；
->
->     DispatcherServlet对请求URL进行解析，得到请求资源标识符（URI）。然后根据该URI，调用HandlerMapping获得该Handler配置的所有相关的对象，以HandlerExecutionChain对象的形式返回；
->
->     DispatcherServlet 根据获得的Handler，选择一个合适的HandlerAdapter
->
->     提取Request中的模型数据，填充Handler入参，开始执行Handler（Controller)。
->
->      Handler执行完成后，向DispatcherServlet 返回一个ModelAndView对象；
->
->     根据返回的ModelAndView，选择一个适合的ViewResolver返回给DispatcherServlet，ViewResolver 结合Model和View，来渲染视图
->
->     将渲染结果返回给客户端
->
-> 10. **Spring 框架中用到了哪些设计模式？**
->
->     1. 使用工厂模式可以通过 `BeanFactory` 或 `ApplicationContext` 创建 bean 对象；(BeanFactory延迟注入，ApplicationContext一次性实例化所有bean)
->     2. 某些对象比如线程池、缓存、注册表等只能有一个实例，所以也有单例模式。(为啥spring默认单例：因为减少了新创建对象的消耗、减少gc压力、可以快速从缓存获取到bean。缺点：容易出现线程不安全的问题，因此最好只在spring中创建**无状态**的bean，如果必须有状态，就使用**ThreadLocal**把变量变为**线程私有**的，如果bean的实例变量或类变量需要在多个线程之间共享，那么就只能使用**synchronized**、**lock**、**CAS**等这些实现线程同步的方法了)
->     3. 动态代理：AOP的实现过程中就用到了
->     4. 模板方法：jdbcTemplate
->     5. 适配器模式：将一个接口转换成客户希望的另一个接口，适配器模式使接口不兼容的那些类可以一起工作。Spring AOP 的增强或通知(Advice)使用到了适配器模式，与之相关的接口是`AdvisorAdapter`，Advice 常用的类型有BeforeAdvice、AfterAdvice、AfterReturningAdvice。每个类型Advice（通知）都有对应的拦截器MethodBeforeAdviceInterceptor等。Spring预定义的通知要通过对应的适配器，适配成 `MethodInterceptor`接口(方法拦截器)类型的对象
->     6. 装饰者模式
->
-> 11. **@Component 和 @Bean 的区别是什么？**
->
->     @Component允许通过类路径扫描自动发现；@Bean只能在配置类中明确的声明一个单例的bean，但是Bean比Component的自定义性更强。可以实现一些Component实现不了的自定义加载类。
+> 1. 使用工厂模式可以通过 `BeanFactory` 或 `ApplicationContext` 创建 bean 对象；(BeanFactory延迟注入，ApplicationContext一次性实例化所有bean)
+> 2. 某些对象比如线程池、缓存、注册表等只能有一个实例，所以也有单例模式。(为啥spring默认单例：因为减少了新创建对象的消耗、减少gc压力、可以快速从缓存获取到bean。缺点：容易出现线程不安全的问题，因此最好只在spring中创建**无状态**的bean，如果必须有状态，就使用**ThreadLocal**把变量变为**线程私有**的，如果bean的实例变量或类变量需要在多个线程之间共享，那么就只能使用**synchronized**、**lock**、**CAS**等这些实现线程同步的方法了)
+> 3. 动态代理：AOP的实现过程中就用到了
+> 4. 模板方法：jdbcTemplate
+> 5. 适配器模式：将一个接口转换成客户希望的另一个接口，适配器模式使接口不兼容的那些类可以一起工作。Spring AOP 的增强或通知(Advice)使用到了适配器模式，与之相关的接口是`AdvisorAdapter`，Advice 常用的类型有BeforeAdvice、AfterAdvice、AfterReturningAdvice。每个类型Advice（通知）都有对应的拦截器MethodBeforeAdviceInterceptor等。Spring预定义的通知要通过对应的适配器，适配成 `MethodInterceptor`接口(方法拦截器)类型的对象
+> 6. 装饰者模式
 >
 > 12. **将一个类声明为Spring的 bean 的注解有哪些?**
 >
->     @Component、@Controller、@Service、@Repository、@Bean、@Autowired、@Qualifier、@Resource
+> @Component、@Controller、@Service、@Repository、@Bean、@Autowired、@Qualifier、@Resource
 >
 > 13. **Spring管理事务的方式有几种？**两种：编码式、声明式事务管理方式，基于AOP技术实现的，实质就是：在方法执行前后进行拦截，然后在目标方法开始之前创建并加入事务，执行完目标方法后根据执行情况提交或回滚事务。声明式事务管理又有两种方式：基于XML配置文件的方式；另一个是在业务方法上进行@Transactional注解，将事务规则应用到业务逻辑中。
 >
->     Spring事务管理接口：PlatformTransactionManager（平台）事务管理器、TransactionDefinition 事务定义信息(事务隔离级别、传播行为、超时、只读、回滚规则)、TransactionStatus 事务运行状态
+> Spring事务管理接口：PlatformTransactionManager（平台）事务管理器、TransactionDefinition 事务定义信息(事务隔离级别、传播行为、超时、只读、回滚规则)、TransactionStatus 事务运行状态
 >
->     Spring并不直接管理事务，而是提供了多种事务管理器 ，他们将事务管理的职责委托给Hibernate或者JTA等持久化机制所提供的相关平台框架的事务来实现。MaBatis：DataSourceTransactionManager
+> Spring并不直接管理事务，而是提供了多种事务管理器 ，他们将事务管理的职责委托给Hibernate或者JTA等持久化机制所提供的相关平台框架的事务来实现。MaBatis：DataSourceTransactionManager
 >
 > 14. **Spring事务中的隔离级别有哪几种?** https://juejin.im/post/5b00c52ef265da0b95276091
 >
->     TransactionDefinition 接口中定义了五个表示隔离级别的常量：
+> TransactionDefinition 接口中定义了五个表示隔离级别的常量：
 >
->     TransactionDefinition.ISOLATION_DEFAULT 使用后端数据库默认的隔离级别，MySQL RR Oracle RC
+> TransactionDefinition.ISOLATION_DEFAULT 使用后端数据库默认的隔离级别，MySQL RR Oracle RC
 >
->     TransactionDefinition.ISOLATION_READ_UNCOMMITTED **脏读、幻读、不可重复读**
+> TransactionDefinition.ISOLATION_READ_UNCOMMITTED **脏读、幻读、不可重复读**
 >
->     TransactionDefinition.ISOLATION_READ_COMMITTED **幻读、不可重复读**
+> TransactionDefinition.ISOLATION_READ_COMMITTED **幻读、不可重复读**
 >
->     TransactionDefinition.ISOLATION_REPEATABLE_READ **幻读**
+> TransactionDefinition.ISOLATION_REPEATABLE_READ **幻读**
 >
->     TransactionDefinition.ISOLATION_SERIALIZABLE 性能差
+> TransactionDefinition.ISOLATION_SERIALIZABLE 性能差
 >
-> 15. Spring事务中哪几种事务传播行为? https://juejin.im/post/5b00c52ef265da0b95276091
+> 15. **Spring事务中哪几种事务传播行为?** https://juejin.im/post/5b00c52ef265da0b95276091
 >
->     当事务方法被另一个事务方法调用时，必须指定事务应该如何传播
+> 当事务方法被另一个事务方法调用时，必须指定事务应该如何传播
+>
+> 16. **SpringMVC工作具体流程**
+> 17. **SpringMVC都有哪些注解**
 
 [49个Spring经典面试题总结，附带答案! (一)](https://zhuanlan.zhihu.com/p/62905881)     [49个Spring经典面试题总结，附带答案! (二)](https://zhuanlan.zhihu.com/p/62906906)
 

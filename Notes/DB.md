@@ -64,8 +64,9 @@
 
 **怎么实现事物的这些隔离级别**
 
-> 主要方法有两种：加读写锁 || 使用一致性快照读，即MVCC（Multiversion Concurrency Control）
+> 主要方法有两种：加读写锁 || 使用一致性快照读，即MVCC（Multiversion Concurrency Control）。
 >
+> 具体的：
 
 **MySQL锁机制**   [MySQL锁总结](https://zhuanlan.zhihu.com/p/29150809)
 
@@ -136,13 +137,19 @@
 > 2. 每次都需要查询到叶子节点，查询性能稳定
 > 3. 叶子节点形成有序链表，范围查询方便
 >
-> MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。
+> MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是**数据记录的地址**。
 >
 > ![img](assets/8.png)
 >
-> 虽然InnoDB也使用B+Tree作为索引结构，但第一个重大区别是InnoDB的数据文件本身就是索引文件。这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。
+> 虽然InnoDB也使用B+Tree作为索引结构，但第一个重大区别是InnoDB的数据文件本身就是索引文件。这棵树的叶节点data域保存了**完整的数据记录**。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主键索引。
 >
 > ![img](assets/10.png)
+
+**聚簇索引与非聚簇索引的区别**
+
+**InnoDB怎么实现聚簇索引**
+
+
 
 **索引的分类**
 
