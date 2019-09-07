@@ -6,6 +6,8 @@
 
 **传输层和网络层的区别**：网络层负责ip数据报的产生以及ip数据包在逻辑网络上的路由转发，寻址是主机级别的。传输层提供端到端通信服务层次,提供可靠及非可靠连接，寻址是进程级的。网络层负责分组、路由和转发；传输层负责端口寻址、差错控制、拥塞控制等。https://blog.csdn.net/jinzhao1993/article/details/53354086
 
+IP
+
 **UDP协议的特点**：无连接、面向报文、单播多播广播、头部开销小、无差错恢复拥塞控制、到达目的地是无序的、不可靠、但是速度快。https://cloud.tencent.com/developer/article/1405940 https://jaminzhang.github.io/network/The-Difference-Between-TCP-And-UDP-Protocol/
 
 **UDP协议格式**：16位源端口、16位目的端口、16位报文长度、16位校验和，总共8字节的首部，外加数据。
