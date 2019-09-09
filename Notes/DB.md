@@ -216,3 +216,5 @@
 > MyISAM：默认表级锁、不支持事务、支持fulltext索引、普通读写快、不适合于高并发大负载的场景
 >
 > InnoDB：默认行级锁，但是只是使用索引检索才用，否则变表级锁、支持事务、支持外键、支持mvcc、以前不支持fulltext但现在支持了，普通读写比MyISAM慢，但由于支持事务所以适合在高并发场景下用
+
+https://www.cnblogs.com/rjzheng/p/9907304.html
