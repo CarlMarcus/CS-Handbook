@@ -22,7 +22,7 @@ Channel：连接data数据与buffer缓存区的桥梁，一个应用程序和操
 
 Buffer：用于和NIO Channel进行交互，有写模式和读模式两种
 
-Selector：多路复用器/轮询代理器/事件订阅器，能检测到多个NIO通道，接受多个SocketChannel的注册，维护一个“已经注册的Channel”的容器，Selector会轮询监听多个通道的事件，直到监听到一个或多个通道的事件就绪
+Selector：多路复用器/轮询代理器/事件订阅器，能检测到多个NIO通道，接受多个SocketChannel的注册，同时会返回一个SelectionKey选择键对象，这个键对象标识了通道和选择器之间的注册关系。选择键会记住您关心的通道。它们也会追踪对应的通道是否已经就绪。当您调用一个选择器对象的select( )方法时，相关的键建会被更新，用来检查所有被注册到该选择器的通道。维护一个“已经注册的Channel”的容器，Selector会轮询监听多个通道的事件，直到监听到一个或多个通道的事件就绪。
 
 #### Reactor模型
 
@@ -84,7 +84,12 @@ e)用户主动唤醒（wakenUp.get()==true）
 
 **3）解决JDK的NIO epoll bug**
 
-该bug会导致Selector一直空轮询，最终导致cpu 100%。
+**该bug会导致Selector一直空轮询，最终导致cpu 100%**。
+
+- 正常情况下，`selector.select()`操作是阻塞的，只有被监听的fd有读写操作时，才被唤醒
+- 但是，在这个bug中，没有任何fd有读写请求，但是`select()`操作依旧被唤醒
+- 很显然，这种情况下，`selectedKeys()`返回的是个空数组
+- 然后按照逻辑执行到`while(true)`处，循环执行，导致死循环。
 
 在每次selector.select(timeoutMillis)后，如果没有监听到就绪IO事件，会记录此次select的耗时。如果耗时不足timeoutMillis，说明select操作没有阻塞那么长时间，可能触发了空轮询，进行一次计数。
 
