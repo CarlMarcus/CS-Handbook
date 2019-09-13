@@ -1,7 +1,7 @@
 ### 设一个rpc需要的元素：
 
 1. 网络通信：一般用netty
-2. 序列化和反序列化：https://github.com/eishay/jvm-serializers/wiki
+2. 序列化和反序列化：https://github.com/eishay/jvm-serializers/wiki http://ngudream.com/2017/08/15/java-protobuf-superior/
 3. 客户端要能得知服务端是否提供它想要的服务
 4. Call调用和服务实例对应
 
