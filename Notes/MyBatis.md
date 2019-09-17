@@ -112,3 +112,11 @@
 > mapper接口中的方法名和mapper.xml中的定义的statement的id保持一致
 > Spring中定义
 > 2.使用mapper扫描器
+
+#### 16 MyBatis你只写了接口为啥就能执行SQL啊？
+
+动态代理：MapperProxy类实现了InvocationHandler接口
+
+https://www.cnblogs.com/demingblog/p/9544774.html
+
+https://blog.csdn.net/lu930124/article/details/50991899

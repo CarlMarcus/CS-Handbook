@@ -48,6 +48,10 @@ Zab做了如下几条保证，来达到ZooKeeper要求的一致性。
 
 #### **ZooKeeper是如何选主的？**
 
+http://www.jasongj.com/zookeeper/distributedlock/
+
+https://blog.csdn.net/chengyuqiang/article/details/79190061
+
 当leader崩溃或者leader失去大多数的follower，这时zk进入恢复模式，恢复模式需要重新选举出一个新的leader，让所有的Server都恢复到一个正确的状态。Zk的选举算法有两种：一种是基于basic paxos实现的，另外一种是基于fast paxos算法实现的。系统默认的选举算法为**fast paxos**。
 
 1、Zookeeper选主流程(basic paxos)

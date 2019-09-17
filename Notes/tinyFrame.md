@@ -78,3 +78,9 @@ Controller,Service类是框架需要管理的类，把他们统称为Bean类，�
 - 加载ControllerHelper类，将Controller类中带有RequestMapping注解的方法，建立与请求路径和请求方法的映射关系，这样框架才能找到处理请求对应的方法。
 
 使用一个Request类封装从HttpServletRequest请求对象中获取所有的参数，然后传递给处理方法，处理方法将其封装成Param类中，传递给Controller的方法处理。
+
+
+
+IOC实现过程
+
+getResourceAsStream获取了properties文件中的基础包名，解析了包名下的所有类，通过Class.forName加载了所有类，还初始化了。
