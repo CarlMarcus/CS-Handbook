@@ -66,7 +66,9 @@ https://zhuanlan.zhihu.com/p/35853397
 
 https://cloud.tencent.com/developer/article/1350858
 
-Jdk7采用segment数组（默认16个，继承reentrantlock）和HashEntry（value和next是volatile的）组成。
+##### Jdk7
+
+采用segment数组（默认16个，继承reentrantlock）和HashEntry（value和next是volatile的）组成。
 
 **put**：通过 key 的hash运算定位到 Segment，之后在对应的 Segment 中进行具体的 put，虽然 HashEntry 中的 value 是用 volatile 关键词修饰的，但是并不能保证并发的原子性，所以 put 操作时仍然需要加锁处理。首先第一步的时候会**尝试获取锁**，如果获取失败肯定就有其他线程存在竞争，则利用 `scanAndLockForPut()` **自旋**获取锁，自旋一定次数后变为阻塞锁。获取到segment的锁后，将当前 Segment 中的 table 通过 key 的 hashcode 定位到 HashEntry，遍历该 HashEntry，如果不为空则判断传入的 key 和当前遍历的 key 是否相等，相等则覆盖旧的 value。不为空则需要新建一个 HashEntry 并加入到 Segment 中，同时会先判断是否需要扩容。然后释放segment的锁。
 
@@ -82,7 +84,9 @@ Jdk7采用segment数组（默认16个，继承reentrantlock）和HashEntry（val
 
  
 
-jdk8不用segment，锁定粒度是bucket中的每一个槽位，把jdk7中的HashEntry改成了Node，采用了 `CAS + synchronized` 来保证并发安全性。
+##### jdk8
+
+不用segment，锁定粒度是bucket中的每一个槽位，把jdk7中的HashEntry改成了Node，采用了 `CAS + synchronized` 来保证并发安全性。
 
 **put**：根据 key 计算出 hashcode ；Put如果相应位置的Node还未初始化（只有在执行第一次put方法时才会调用initTable()初始化Node数组），则通过CAS插入相应的数据；如果相应位置的Node不为空，且当前该节点不处于移动状态，则对该节点加synchronized锁；如果插入的是一个新节点，则执行addCount()方法尝试更新元素个数baseCount；如果这个位置显示正在进行扩容，就协助一起进行扩容
 
